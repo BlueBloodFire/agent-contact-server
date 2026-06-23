@@ -1,0 +1,5 @@
+spring:
+  config:
+    name: agent-scaffold-app
+  profiles:
+    active: dev

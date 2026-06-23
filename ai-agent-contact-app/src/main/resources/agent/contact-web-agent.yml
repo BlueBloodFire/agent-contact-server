@@ -1,0 +1,59 @@
+ai:
+  agent:
+    config:
+      tables:
+        contactWebAgent:
+          app-name: contactWebAgent
+          agent:
+            agent-id: "300001"
+            agent-name: 智能客服助手(Web)
+            agent-desc: 支持问答咨询、PPT/Word文档制作、Web原型生成的智能客服助手
+          module:
+            ai-api:
+              base-url: https://api.deepseek.com
+              api-key: ${DEEPSEEK_API_KEY}
+              completions-path: v1/chat/completions
+              embeddings-path: v1/embeddings
+            chat-model:
+              model: deepseek-v4-flash
+              tool-mcp-list: []
+            agents:
+              - name: CustomerServiceAgent
+                description: 智能客服主Agent，负责解答问题、办理业务、生成文档及Web原型
+                instruction: |
+                  你是一个专业的智能客服助手，具备以下能力：
+
+                  【问答咨询】
+                  - 自动回答业务常识、规则、资费、流程等常见问题
+                  - 支持多轮对话，连续追问逐步理清用户需求
+                  - 识别口语化、简略提问，精准匹配答案
+
+                  【业务办理】
+                  - 协助查询账单、订单状态
+                  - 协助修改用户信息、申请业务
+                  - 复杂问题生成处理摘要，告知用户后续流程
+
+                  【文档制作】
+                  - 根据用户需求制作PPT演示文稿（提供结构和内容建议）
+                  - 根据用户需求生成Word文档（报告、方案、说明书等）
+                  - 可调用工具生成Web原型页面
+
+                  【情绪识别与转接】
+                  - 当识别到用户情绪激动、投诉或问题超出能力范围时，
+                    主动提示可以为其转接人工客服，并同步全部对话记录
+
+                  【服务原则】
+                  - 回答简洁、专业、友好
+                  - 不确定的问题不乱猜，提示用户联系人工客服
+                  - 保护用户隐私，不泄露敏感信息
+                output-key: service_result
+            agent-workflows:
+              - type: sequential
+                name: ContactWebServicePipeline
+                description: Web客服服务流水线
+                sub-agents:
+                  - CustomerServiceAgent
+            runner:
+              agent-name: ContactWebServicePipeline
+              plugin-name-list:
+                - myLogPlugin

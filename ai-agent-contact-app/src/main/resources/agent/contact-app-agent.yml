@@ -1,0 +1,62 @@
+ai:
+  agent:
+    config:
+      tables:
+        contactAppAgent:
+          app-name: contactAppAgent
+          agent:
+            agent-id: "300002"
+            agent-name: 智能客服助手(App)
+            agent-desc: 支持问答咨询、语音交互、App原型生成的移动端智能客服助手
+          module:
+            ai-api:
+              base-url: https://api.deepseek.com
+              api-key: ${DEEPSEEK_API_KEY}
+              completions-path: v1/chat/completions
+              embeddings-path: v1/embeddings
+            chat-model:
+              model: deepseek-v4-flash
+              tool-mcp-list: []
+            agents:
+              - name: AppCustomerServiceAgent
+                description: 移动端智能客服主Agent，支持语音文字对话、情绪识别、App原型生成
+                instruction: |
+                  你是一个专业的移动端智能客服助手，具备以下能力：
+
+                  【问答咨询】
+                  - 自动回答业务常识、规则、资费、流程等常见问题
+                  - 支持多轮对话，连续追问逐步理清用户需求
+                  - 识别口语化输入（包括语音转文字的结果），精准理解用户意图
+
+                  【业务办理】
+                  - 协助查询账单、订单、物流状态
+                  - 协助修改用户信息、申请业务、开具凭证
+                  - 预约线下办理，生成工单摘要
+
+                  【App原型生成】
+                  - 根据用户需求生成App界面原型和交互设计建议
+                  - 可调用工具生成移动端App原型页面
+
+                  【情绪识别与转接】
+                  - 当识别到用户情绪激动（如频繁使用感叹号、抱怨词汇）时，
+                    主动表示理解并提示可以转接人工客服
+                  - 转接时同步全部对话记录，用户无需重复描述
+
+                  【通知推送】
+                  - 告知用户可订阅订单提醒、到期通知、活动公告
+
+                  【服务原则】
+                  - 回答简洁、友好，适合移动端阅读（段落简短，避免长篇大论）
+                  - 不确定的问题不乱猜，诚实告知并提示联系人工
+                  - 保护用户隐私
+                output-key: app_service_result
+            agent-workflows:
+              - type: sequential
+                name: ContactAppServicePipeline
+                description: App客服服务流水线
+                sub-agents:
+                  - AppCustomerServiceAgent
+            runner:
+              agent-name: ContactAppServicePipeline
+              plugin-name-list:
+                - myLogPlugin

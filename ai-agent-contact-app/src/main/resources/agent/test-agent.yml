@@ -1,0 +1,83 @@
+ai:
+  agent:
+    config:
+      tables:
+        testAgent01:
+          app-name: testAgent01
+          agent:
+            agent-id: 100001
+            agent-name: 测试智能体01
+            agent-desc: 测试 Sequential / Parallel / Loop 三种节点流转
+          module:
+            ai-api:
+              base-url: https://api.deepseek.com
+              api-key: ${DEEPSEEK_API_KEY}
+              completions-path: v1/chat/completions
+              embeddings-path: v1/embeddings
+            chat-model:
+              model: deepseek-v4-flash
+              tool-mcp-list: []
+            agents:
+              - name: WriterAgent
+                description: 代码编写智能体
+                instruction: |
+                  你是一个 Java 代码编写助手。
+                  根据用户需求，编写简洁的 Java 代码实现，只输出代码块，不加额外说明。
+                output-key: written_code
+              - name: ReviewerAgent
+                description: 代码审查智能体
+                instruction: |
+                  你是一个代码审查助手。
+                  审查以下代码并给出简短的改进建议（不超过3条）：
+                  {written_code}
+                output-key: review_result
+              - name: RefactorerAgent
+                description: 代码重构智能体
+                instruction: |
+                  你是一个代码重构助手。
+                  根据以下审查意见对代码进行重构，只输出最终代码块：
+                  原始代码：{written_code}
+                  审查意见：{review_result}
+                output-key: refactored_code
+              - name: SummaryAgent
+                description: 结果总结智能体
+                instruction: |
+                  你是一个总结助手。
+                  用一句话总结本次代码生成的最终结果：{refactored_code}
+                output-key: summary
+            agent-workflows:
+              # 第一步：Sequential —— 串行执行 Writer -> Reviewer -> Refactorer
+              - type: sequential
+                name: CodePipelineAgent
+                description: 串行代码流水线（编写→审查→重构）
+                sub-agents:
+                  - WriterAgent
+                  - ReviewerAgent
+                  - RefactorerAgent
+              # 第二步：Parallel —— 并行执行 Writer 和 Reviewer（验证并行节点）
+              - type: parallel
+                name: ParallelAnalysisAgent
+                description: 并行分析（Writer 与 Reviewer 同时运行）
+                sub-agents:
+                  - WriterAgent
+                  - ReviewerAgent
+              # 第三步：Loop —— 循环执行 SummaryAgent，迭代2次（验证循环节点）
+              - type: loop
+                name: LoopSummaryAgent
+                description: 循环总结（最多迭代2次）
+                sub-agents:
+                  - SummaryAgent
+                max-iterations: 2
+              # 第四步：Sequential —— 将上面三个 workflow agent 串起来作为根入口
+              - type: sequential
+                name: RootPipelineAgent
+                description: 根流水线，依次执行串行、并行、循环三个子流程
+                sub-agents:
+                  - CodePipelineAgent
+                  - ParallelAnalysisAgent
+                  - LoopSummaryAgent
+            runner:
+              agent-name: RootPipelineAgent
+              plugin-name-list:
+                - myLogPlugin
+                - prometheusPlugin

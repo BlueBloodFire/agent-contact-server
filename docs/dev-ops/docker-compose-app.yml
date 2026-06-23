@@ -1,0 +1,41 @@
+# docker-compose -f docker-compose-app.yml up -d
+# 前端部署前先执行：cd ../../.. && cd ../ai-agent-contact-client && npm run build
+# 然后将 ai-agent-contact-client/dist/* 复制到 docs/dev-ops/nginx/html/
+version: '3.8'
+services:
+  ai-agent-contact:
+    image: system/ai-agent-contact:1.0
+    container_name: ai-agent-contact
+    restart: on-failure
+    ports:
+      - "8092:8092"
+    environment:
+      - TZ=PRC
+      - SERVER_PORT=8092
+    volumes:
+      - ./log:/data/log
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - my-network
+
+  nginx:
+    image: nginx:1.25
+    container_name: ai-agent-contact-nginx
+    restart: on-failure
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+    depends_on:
+      - ai-agent-contact
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

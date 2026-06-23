@@ -1,0 +1,38 @@
+ai:
+  agent:
+    config:
+      tables:
+        mcpTestAgent01:
+          app-name: mcpTestAgent01
+          agent:
+            agent-id: 200001
+            agent-name: MCP测试智能体01
+            agent-desc: 测试 Local MCP 工具调用
+          module:
+            ai-api:
+              base-url: https://api.deepseek.com
+              api-key: ${DEEPSEEK_API_KEY}
+              completions-path: v1/chat/completions
+              embeddings-path: v1/embeddings
+            chat-model:
+              model: deepseek-v4-flash
+              tool-mcp-list:
+                - local:
+                    name: myTestMcpService
+            agents:
+              - name: ToolAgent
+                description: 工具调用智能体
+                instruction: |
+                  你是一个工具调用助手，你有以下工具可以使用：
+                  - getCurrentTime: 获取当前系统时间
+                  - add: 将两个整数相加
+                  请根据用户的需求调用适当的工具并返回结果。
+                output-key: tool_result
+            agent-workflows:
+              - type: sequential
+                name: McpToolPipelineAgent
+                description: 串行MCP工具调用流水线
+                sub-agents:
+                  - ToolAgent
+            runner:
+              agent-name: McpToolPipelineAgent

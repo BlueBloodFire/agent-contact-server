@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: agent-mysql
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wangjin@test}
+      MYSQL_DATABASE: agent_scaffold
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - agent-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent-backend
+    restart: on-failure
+    ports:
+      - "8092:8092"
+    environment:
+      TZ: Asia/Shanghai
+      SPRING_PROFILES_ACTIVE: prod
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-wangjin@test}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - agent-network
+
+  frontend:
+    build:
+      context: ../agent-contact-client
+      dockerfile: Dockerfile
+    container_name: agent-frontend
+    restart: on-failure
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - agent-network
+
+volumes:
+  mysql_data:
+
+networks:
+  agent-network:
+    driver: bridge
