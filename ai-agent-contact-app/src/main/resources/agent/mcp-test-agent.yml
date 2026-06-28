@@ -11,7 +11,7 @@ ai:
           module:
             ai-api:
               base-url: https://api.deepseek.com
-              api-key: ${DEEPSEEK_API_KEY}
+              api-key: ${deepseek.api-key}
               completions-path: v1/chat/completions
               embeddings-path: v1/embeddings
             chat-model:

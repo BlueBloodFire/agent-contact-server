@@ -56,6 +56,12 @@ public class AiAgentConfigTableVO {
 
         private Runner runner;
 
+        /** "direct" 表示绕过 ADK 直接用 Spring AI 流式输出 */
+        private String mode;
+
+        /** direct 模式下的系统提示词 */
+        private String systemPrompt;
+
         @Data
         public static class AiApi {
             private String baseUrl;
@@ -130,6 +136,7 @@ public class AiAgentConfigTableVO {
             private String instruction;
             private String description;
             private String outputKey;
+            private List<String> toolNameList;
 
         }
 

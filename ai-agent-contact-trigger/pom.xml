@@ -40,6 +40,10 @@
             <groupId>cn.wjagent.ai</groupId>
             <artifactId>ai-agent-contact-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.wjagent.ai</groupId>
+            <artifactId>ai-agent-contact-infrastructure</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -2,6 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 CLAUDE.md
 .env
+data/
 
 !**/src/main/**/target/
 !**/src/test/**/target/

@@ -1,6 +1,13 @@
 server:
   port: 8092
 
+tavily:
+  search:
+    api-key: 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
+
+deepseek:
+  api-key: sk-be4e63f0a4284eeba0ceb246c0d5d768
+
 # 线程池配置
 thread:
   pool:
@@ -20,10 +27,11 @@ spring:
       - classpath:agent/mcp-test-agent.yml
       - classpath:agent/contact-web-agent.yml
       - classpath:agent/contact-app-agent.yml
+      - classpath:agent/direct-chat-agent.yml
   datasource:
     username: root
     password: wangjin@test
-    url: jdbc:mysql://127.0.0.1:3306/agent_scaffold?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    url: jdbc:mysql://127.0.0.1:3306/agent-ai-contact?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   hikari:
     pool-name: Retail_HikariCP
@@ -36,10 +44,10 @@ spring:
     connection-test-query: SELECT 1
   type: com.zaxxer.hikari.HikariDataSource
 
-# MyBatis 配置【如需使用记得打开】
-#mybatis:
-#  mapper-locations: classpath:/mybatis/mapper/*.xml
-#  config-location:  classpath:/mybatis/config/mybatis-config.xml
+mybatis:
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
 
 # Prometheus 监控
 management:

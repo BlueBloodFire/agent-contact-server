@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.wjagent.ai.infrastructure.dao.AgentModelConfigDao">
+
+    <insert id="upsert" parameterType="cn.wjagent.ai.infrastructure.po.AgentModelConfigPO">
+        INSERT INTO agent_model_config (user_id, agent_id, base_url, api_key, model)
+        VALUES (#{userId}, #{agentId}, #{baseUrl}, #{apiKey}, #{model})
+        ON DUPLICATE KEY UPDATE
+            base_url = VALUES(base_url),
+            api_key  = VALUES(api_key),
+            model    = VALUES(model)
+    </insert>
+
+    <select id="findByUserIdAndAgentId" resultType="cn.wjagent.ai.infrastructure.po.AgentModelConfigPO">
+        SELECT id, user_id, agent_id, base_url, api_key, model, updated_at
+        FROM agent_model_config
+        WHERE user_id = #{userId} AND agent_id = #{agentId}
+    </select>
+
+    <select id="findAll" resultType="cn.wjagent.ai.infrastructure.po.AgentModelConfigPO">
+        SELECT id, user_id, agent_id, base_url, api_key, model, updated_at
+        FROM agent_model_config
+    </select>
+
+</mapper>

@@ -11,7 +11,7 @@ ai:
           module:
             ai-api:
               base-url: https://api.deepseek.com
-              api-key: ${DEEPSEEK_API_KEY}
+              api-key: ${deepseek.api-key}
               completions-path: v1/chat/completions
               embeddings-path: v1/embeddings
             chat-model:
@@ -20,8 +20,15 @@ ai:
             agents:
               - name: CustomerServiceAgent
                 description: 智能客服主Agent，负责解答问题、办理业务、生成文档及Web原型
+                tool-name-list:
+                  - bingSearchTool
                 instruction: |
                   你是一个专业的智能客服助手，具备以下能力：
+
+                  【联网搜索 — 仅在必要时调用】
+                  - 只有当用户明确要求"搜索"、"查询最新"、"实时信息"时才调用 search 工具
+                  - 对于一般问题、常识问题、业务咨询，直接基于知识回答，不要调用 search
+                  - 调用前先说"正在为您搜索相关信息…"，搜索后综合结果给出简洁答案并注明来源
 
                   【问答咨询】
                   - 自动回答业务常识、规则、资费、流程等常见问题

@@ -11,64 +11,79 @@ ai:
           module:
             ai-api:
               base-url: https://api.deepseek.com
-              api-key: ${DEEPSEEK_API_KEY}
+              api-key: ${deepseek.api-key}
               completions-path: v1/chat/completions
               embeddings-path: v1/embeddings
             chat-model:
-              model: deepseek-v4-flash
+              model: deepseek-chat
               tool-mcp-list: []
             agents:
               - name: WriterAgent
                 description: 代码编写智能体
                 instruction: |
                   你是一个 Java 代码编写助手。
-                  根据用户需求，编写简洁的 Java 代码实现，只输出代码块，不加额外说明。
+                  根据用户需求，用 Markdown 格式输出，包含：
+                  1. 一句话说明实现思路
+                  2. 完整的 Java 代码块（用 ```java ... ``` 包裹）
+                  不需要其他额外说明。
                 output-key: written_code
               - name: ReviewerAgent
                 description: 代码审查智能体
                 instruction: |
                   你是一个代码审查助手。
-                  审查以下代码并给出简短的改进建议（不超过3条）：
+                  审查以下代码，用 Markdown 格式输出不超过 3 条改进建议，每条用 `- ` 开头：
                   {written_code}
                 output-key: review_result
               - name: RefactorerAgent
                 description: 代码重构智能体
                 instruction: |
                   你是一个代码重构助手。
-                  根据以下审查意见对代码进行重构，只输出最终代码块：
+                  根据以下审查意见对代码进行重构，只输出重构后的 Java 代码块（用 ```java ... ``` 包裹），不加其他说明：
                   原始代码：{written_code}
                   审查意见：{review_result}
                 output-key: refactored_code
               - name: SummaryAgent
                 description: 结果总结智能体
                 instruction: |
-                  你是一个总结助手。
-                  用一句话总结本次代码生成的最终结果：{refactored_code}
+                  你是一个技术助手，请将本次代码生成流程的最终结果整理成清晰的 Markdown 报告，格式如下：
+
+                  ## 代码生成报告
+
+                  ### 最终代码
+                  （粘贴重构后的代码块）
+                  {refactored_code}
+
+                  ### 审查要点
+                  {review_result}
+
+                  ### 总结
+                  用 2-3 句话说明本次生成的主要实现思路和优化点。
                 output-key: summary
             agent-workflows:
-              # 第一步：Sequential —— 串行执行 Writer -> Reviewer -> Refactorer
+              # Sequential：串行执行 Writer -> Reviewer -> Refactorer -> Summary
               - type: sequential
                 name: CodePipelineAgent
-                description: 串行代码流水线（编写→审查→重构）
+                description: 串行代码流水线（编写→审查→重构→总结）
                 sub-agents:
                   - WriterAgent
                   - ReviewerAgent
                   - RefactorerAgent
-              # 第二步：Parallel —— 并行执行 Writer 和 Reviewer（验证并行节点）
+                  - SummaryAgent
+              # Parallel：并行执行 Writer 和 Reviewer（验证并行节点）
               - type: parallel
                 name: ParallelAnalysisAgent
                 description: 并行分析（Writer 与 Reviewer 同时运行）
                 sub-agents:
                   - WriterAgent
                   - ReviewerAgent
-              # 第三步：Loop —— 循环执行 SummaryAgent，迭代2次（验证循环节点）
+              # Loop：循环执行 SummaryAgent，迭代2次（验证循环节点）
               - type: loop
                 name: LoopSummaryAgent
                 description: 循环总结（最多迭代2次）
                 sub-agents:
                   - SummaryAgent
                 max-iterations: 2
-              # 第四步：Sequential —— 将上面三个 workflow agent 串起来作为根入口
+              # Root：将上面三个 workflow agent 串起来作为根入口
               - type: sequential
                 name: RootPipelineAgent
                 description: 根流水线，依次执行串行、并行、循环三个子流程

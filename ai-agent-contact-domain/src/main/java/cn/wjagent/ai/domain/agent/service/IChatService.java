@@ -21,4 +21,12 @@ public interface IChatService {
 
     List<String> handleMessage(ChatCommandEntity chatCommandEntity);
 
+    Flowable<Event> handleMessageStream(ChatCommandEntity chatCommandEntity);
+
+    /** 判断指定 agentId 是否为 direct 模式 */
+    boolean isDirectMode(String agentId);
+
+    /** direct 模式下的流式对话，返回 token 字符串流 */
+    Flowable<String> handleMessageStreamDirect(String agentId, String userId, String sessionId, String message);
+
 }

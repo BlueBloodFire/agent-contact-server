@@ -11,10 +11,11 @@
 
 ### 客服 Agent 配置（2026-06-22）
 
-| Agent | Agent ID | 说明 |
-|-------|----------|------|
-| contactWebAgent | 300001 | Web智能客服：问答咨询、PPT/Word制作、Web原型生成（Stitch MCP） |
-| contactAppAgent | 300002 | App智能客服：问答咨询、情绪识别、App原型生成（Stitch MCP） |
+| Agent | Agent ID | 模式 | 说明 |
+|-------|----------|------|------|
+| contactWebAgent | 300001 | ADK | Web智能客服：问答咨询、PPT/Word制作、Web原型生成（Stitch MCP） |
+| contactAppAgent | 300002 | ADK | App智能客服：问答咨询、情绪识别、App原型生成（Stitch MCP） |
+| directChatAgent | 300003 | direct | 通用智能助手：自由对话、知识问答、内容创作；Spring AI 直接流式，TTFT 极低 |
 
 ### AI 框架集成（2026-06-12）
 
@@ -43,7 +44,9 @@
 | A4+ | 插件体系 | BasePlugin 扩展：MyLogPlugin(LoggingPlugin)、MyTestPlugin(回调日志)、PrometheusPlugin(Micrometer 监控) | 中 | ✅ 已完成 |
 | A5 | 多 Agent 编排 | ADK Sequential/Parallel/Loop 三种 workflow 节点，index 递进流转 | 高 | ✅ 已完成 |
 | A6 | 会话持久化 | chat_session/chat_message 表 + MyBatis（脚手架已含依赖） | 中 | 待实现 |
-| A7 | RAG 知识库 | Spring AI EmbeddingModel + VectorStore | 中 | 待实现 |
+| A7 | RAG 知识库 | 关键词匹配分块检索，上传文档后自动注入对话上下文 | 中 | ✅ 已完成 |
+| A8 | 用户认证 | 硬编码3账号 token 认证，8h 自动过期，拦截器保护所有接口 | 低 | ✅ 已完成 |
+| A9 | 动态模型配置 | 运行时更新 agentId 的 baseUrl/apiKey/model 并热重载 | 中 | ✅ 已完成 |
 | B1 | 会话持久化 | chat_session/chat_message 表，记录客服对话全程 | 中 | 待实现 |
 | B2 | 情绪分析增强 | 情绪标签 + 自动转人工触发器 | 中 | 待实现 |
 | B3 | 消息通知 | 订单/到期/活动主动推送（WebSocket/SSE） | 中 | 待实现 |

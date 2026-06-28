@@ -33,6 +33,9 @@ public class ChatModelNode extends AbstractArmorySupport implements ResourceLoad
     private AgentNode agentNode;
 
     @Resource
+    private DirectRunnerNode directRunnerNode;
+
+    @Resource
     private DefaultMcpClientFactory defaultMcpClientFactory;
 
     private ResourceLoader resourceLoader;
@@ -94,6 +97,10 @@ public class ChatModelNode extends AbstractArmorySupport implements ResourceLoad
 
     @Override
     public StrategyHandler<ArmoryCommandEntity, DefaultArmoryFactory.DynamicContext, AiAgentRegisterVO> get(ArmoryCommandEntity requestParameter, DefaultArmoryFactory.DynamicContext dynamicContext) throws Exception {
+        String mode = requestParameter.getAiAgentConfigTableVO().getModule().getMode();
+        if ("direct".equalsIgnoreCase(mode)) {
+            return directRunnerNode;
+        }
         return agentNode;
     }
 
