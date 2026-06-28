@@ -1,9 +1,9 @@
 # docker-compose -f docker-compose-app.yml up -d
-# 前端部署前先执行：cd ../../.. && cd ../ai-agent-contact-client && npm run build
-# 然后将 ai-agent-contact-client/dist/* 复制到 docs/dev-ops/nginx/html/
 version: '3.8'
 services:
-  ai-agent-contact:
+
+  # ─── 后端 Spring Boot ───────────────────────────────────────────
+  backend:
     image: system/ai-agent-contact:1.0
     container_name: ai-agent-contact
     restart: on-failure
@@ -22,17 +22,27 @@ services:
     networks:
       - my-network
 
-  nginx:
-    image: nginx:1.25
-    container_name: ai-agent-contact-nginx
+  # ─── Web 前端 (端口 80) ─────────────────────────────────────────
+  web:
+    image: system/ai-agent-contact-web:1.0
+    container_name: ai-agent-contact-web
     restart: on-failure
     ports:
       - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/html:/usr/share/nginx/html:ro
     depends_on:
-      - ai-agent-contact
+      - backend
+    networks:
+      - my-network
+
+  # ─── App 前端 (端口 8080) ────────────────────────────────────────
+  app:
+    image: system/ai-agent-contact-app:1.0
+    container_name: ai-agent-contact-app
+    restart: on-failure
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
     networks:
       - my-network
 
