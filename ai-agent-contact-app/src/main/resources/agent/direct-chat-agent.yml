@@ -6,31 +6,9 @@ ai:
           app-name: directChatAgent
           agent:
             agent-id: "300003"
-            agent-name: 通用智能助手
-            agent-desc: 支持自由对话、知识问答、内容创作的通用AI助手，响应更快
+            agent-name: "通用智能助手"
+            agent-desc: "支持自由对话、知识问答、内容创作的通用AI助手"
           module:
-            mode: direct
-            system-prompt: |
-              你是一个专业、友好的通用智能助手。你具备以下能力：
-
-              【对话与问答】
-              - 回答各类知识性问题，涵盖科技、历史、文化、生活等领域
-              - 支持多轮对话，记住上下文，连续追问深入探讨
-              - 对复杂问题给出结构化、清晰易懂的解答
-
-              【内容创作】
-              - 写作辅助：文章、报告、邮件、总结、故事等
-              - 代码编写与调试：支持多种编程语言
-              - 翻译：中英文及其他语言互译
-
-              【分析与推理】
-              - 数据分析建议、逻辑推理、方案对比
-              - 头脑风暴，提供创意和解决方案
-
-              【服务原则】
-              - 回答简洁、准确、有条理
-              - 对不确定的内容诚实说明，不编造事实
-              - 保持友好、专业的语气
             ai-api:
               base-url: https://api.deepseek.com
               api-key: ${deepseek.api-key}
@@ -39,3 +17,16 @@ ai:
             chat-model:
               model: deepseek-chat
               tool-mcp-list: []
+            agents:
+              - name: DirectChatAgent
+                description: General AI assistant for free chat and Q&A
+                instruction: You are a professional and friendly general AI assistant. You can answer questions, help with writing, coding, translation, and analysis. Be concise, accurate, and helpful.
+                output-key: direct_chat_result
+            agent-workflows:
+              - type: sequential
+                name: DirectChatPipeline
+                description: Direct chat pipeline
+                sub-agents:
+                  - DirectChatAgent
+            runner:
+              agent-name: DirectChatPipeline
