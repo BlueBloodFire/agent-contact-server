@@ -9,6 +9,8 @@ ai:
             agent-name: "通用智能助手"
             agent-desc: "支持自由对话、知识问答、内容创作的通用AI助手"
           module:
+            mode: direct
+            system-prompt: "You are a professional and friendly general AI assistant. You can answer questions, help with writing, coding, translation, and analysis. Be concise, accurate, and helpful. Only answer the current question; do not repeat or re-summarize previous answers."
             ai-api:
               base-url: https://api.deepseek.com
               api-key: ${deepseek.api-key}

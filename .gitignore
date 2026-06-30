@@ -3,6 +3,8 @@ target/
 CLAUDE.md
 .env
 data/
+**/application-dev.yml
+**/application-prod.yml
 
 !**/src/main/**/target/
 !**/src/test/**/target/

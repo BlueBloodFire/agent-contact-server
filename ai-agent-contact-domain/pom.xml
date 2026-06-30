@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.wjagent.ai</groupId>
         <artifactId>ai-agent-contact</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>ai-agent-contact-domain</artifactId>

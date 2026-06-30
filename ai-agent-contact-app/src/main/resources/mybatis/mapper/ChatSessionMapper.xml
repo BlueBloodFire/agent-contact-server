@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.wjagent.ai.infrastructure.dao.ChatSessionDao">
+
+    <insert id="insert" parameterType="cn.wjagent.ai.infrastructure.po.ChatSessionPO">
+        INSERT INTO chat_session (session_id, agent_id, user_id, title, turn_count)
+        VALUES (#{sessionId}, #{agentId}, #{userId}, #{title}, #{turnCount})
+    </insert>
+
+    <select id="findBySessionId" resultType="cn.wjagent.ai.infrastructure.po.ChatSessionPO">
+        SELECT id, session_id, agent_id, user_id, title, turn_count, created_at, updated_at
+        FROM chat_session
+        WHERE session_id = #{sessionId}
+    </select>
+
+    <select id="findByUserId" resultType="cn.wjagent.ai.infrastructure.po.ChatSessionPO">
+        SELECT id, session_id, agent_id, user_id, title, turn_count, created_at, updated_at
+        FROM chat_session
+        WHERE user_id = #{userId}
+        ORDER BY updated_at DESC
+    </select>
+
+    <select id="findByUserIdAndAgentId" resultType="cn.wjagent.ai.infrastructure.po.ChatSessionPO">
+        SELECT id, session_id, agent_id, user_id, title, turn_count, created_at, updated_at
+        FROM chat_session
+        WHERE user_id = #{userId} AND agent_id = #{agentId}
+        ORDER BY updated_at DESC
+    </select>
+
+    <update id="updateTurnCount">
+        UPDATE chat_session
+        SET turn_count = #{turnCount}, updated_at = NOW()
+        WHERE session_id = #{sessionId}
+    </update>
+
+    <update id="updateTitle">
+        UPDATE chat_session
+        SET title = #{title}, updated_at = NOW()
+        WHERE session_id = #{sessionId}
+    </update>
+
+</mapper>

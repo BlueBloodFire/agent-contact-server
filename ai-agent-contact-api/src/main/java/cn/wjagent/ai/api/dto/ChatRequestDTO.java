@@ -10,5 +10,6 @@ public class ChatRequestDTO {
     private String sessionId;
     private String message;
 
-
+    /** 是否开启联网搜索 */
+    private boolean webSearch;
 }

@@ -29,7 +29,11 @@ public class ModelConfigController {
             log.info("更新模型配置 userId:{} agentId:{} baseUrl:{} model:{}",
                     req.getUserId(), req.getAgentId(), req.getBaseUrl(), req.getModel());
 
-            // 构建并缓存用户级 ChatModel（不影响全局配置）
+            // 重建全局 Agent（使新 key/model 立即生效）
+            defaultArmoryFactory.updateModelConfig(
+                    req.getAgentId(), req.getBaseUrl(), req.getApiKey(), req.getModel());
+
+            // 同时缓存用户级 ChatModel
             defaultArmoryFactory.updateUserModelConfig(
                     req.getUserId(), req.getAgentId(), req.getBaseUrl(), req.getApiKey(), req.getModel());
 

@@ -275,7 +275,7 @@ public class AgentServiceController implements IAgentService {
 
             if (chatService.isDirectMode(requestDTO.getAgentId())) {
                 // direct 模式：Spring AI token 级流式
-                chatService.handleMessageStreamDirect(requestDTO.getAgentId(), requestDTO.getUserId(), finalSessionId, requestDTO.getMessage())
+                chatService.handleMessageStreamDirect(requestDTO.getAgentId(), requestDTO.getUserId(), finalSessionId, requestDTO.getMessage(), requestDTO.isWebSearch())
                         .subscribe(
                                 token -> {
                                     try {
