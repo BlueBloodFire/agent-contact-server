@@ -1,145 +1,141 @@
 # AI Agent Contact Server
 
-`ai-agent-contact` 是 AI 客服产品的后端服务，负责承载智能体运行、会话编排、流式对话、模型配置、知识库接入以及服务端状态管理。
+[中文文档](./README.zh-CN.md)
 
-它不是一个单纯的“聊天接口工程”，而是整个 AI 客服产品的 **Agent Runtime + API Backend**。
+`ai-agent-contact` is the backend service of an AI customer service product.
 
-## 产品定位
+It provides agent orchestration, conversation management, model configuration, knowledge base integration, authentication, and streaming chat APIs for multiple frontend clients.
 
-这个项目面向“AI 客服平台”场景，目标是把客服问答、业务咨询、知识检索、模型切换、会话管理等能力统一沉淀到服务端。
+## What It Does
 
-前端和 App 只负责交互体验，真正的智能体执行、上下文管理和接口输出都由本仓库负责。
+- Manage users, login state, and authenticated access
+- Provide agent selection and agent-facing business APIs
+- Create and maintain multi-session chat conversations
+- Stream AI responses to frontend clients
+- Manage model configuration per agent
+- Integrate knowledge base and RAG-style retrieval workflows
+- Serve as the shared backend for both app-style and desktop-style clients
 
-## 核心功能
+## Product Positioning
 
-### 1. 智能体管理
+This project is not only a chat API.
 
-- 提供多个客服智能体配置
-- 支持按 `agentId` 查询可用智能体列表
-- 区分不同客服角色，例如 Web 客服、App 客服、通用对话助手
+It acts as the backend control layer of an **AI customer service platform**, combining:
 
-### 2. 会话与对话能力
+- agent runtime
+- conversation lifecycle
+- model configuration
+- knowledge base access
+- unified service interfaces for multiple frontend products
 
-- 创建独立会话 `create_session`
-- 普通问答接口 `chat`
-- 流式输出接口 `chat_stream`
-- 支持多轮上下文延续
-- 支持会话标题、轮次、消息记录持久化
+## Core Capabilities
 
-### 3. AI Agent 编排能力
+### Authentication and User Access
 
-- 集成多套 AI Agent 技术路线：
-  - Spring AI
-  - LangChain4j
-  - Google ADK
-- 支持工具调用、流式回复、上下文记忆
-- 适合作为后续客服流程自动化和能力实验平台
+- Login and identity verification
+- Access control for frontend clients
+- Stable auth flow for productized use
 
-### 4. 模型与配置管理
+### Agent and Session Management
 
-- 支持动态切换模型配置
-- 支持不同智能体对应不同模型参数
-- 可用于多模型试验、多供应商兼容和运行时热更新
+- Query available agents
+- Switch among multiple agent roles
+- Create new sessions
+- Restore and continue historical sessions
 
-### 5. 知识库 / RAG 能力
+### AI Conversation Workflow
 
-- 提供知识库接入能力
-- 支持把业务资料、FAQ、文档内容注入客服上下文
-- 为后续精准问答、资料检索和客服增强打基础
+- Multi-turn chat context management
+- User / assistant message persistence
+- Streaming response output for real-time UI updates
 
-### 6. 认证与服务端控制
+### Model Configuration
 
-- 支持用户认证
-- 统一封装 API 输出格式
-- 适合作为 Web 端和 App 端的统一后端
+- Configure model settings by agent
+- Support `baseUrl`, `apiKey`, and `model`
+- Allow switching between model providers and model versions
 
-## 典型使用场景
+### Knowledge Base / RAG
 
-- 做一个企业内部 AI 客服平台，统一接入多个客服智能体
-- 为 App 客服和 Web 客服提供同一套后端能力
-- 做 FAQ、资料问答、业务咨询、表单引导等 AI 客服功能
-- 给不同业务线配置不同 Agent、不同模型和不同知识库
-- 把“模型试验场”逐步演进成“可上线客服后端”
+- Manage knowledge documents
+- Attach reference material to agent workflows
+- Support enterprise Q&A and internal knowledge retrieval scenarios
 
-## 适合谁使用
+## Typical Use Cases
 
-- AI 产品工程师：需要快速搭建具备会话、模型、知识库能力的客服后端
-- 后端工程师：需要一个可扩展的 Agent Runtime 和 API Backend 作为业务底座
-- 平台团队：希望把多个客服智能体统一收口到同一个服务端体系
-- 技术负责人：想验证多模型、多智能体、多前端入口的 AI 客服架构
-- 企业内部创新团队：需要先做可演示、可试运行、可继续产品化的客服后端平台
+- Build the backend of an enterprise AI customer service product
+- Power multiple frontend channels with one agent service layer
+- Validate a product concept that combines agents, models, and knowledge base workflows
+- Support AI assistants for customer service, presales, internal support, or business consulting
 
-## 仓库结构
+## Who It Is For
+
+- Backend engineers building AI customer service or AI Q&A systems
+- AI application developers who want one backend for agents, models, and knowledge
+- Product managers validating whether the backend side of the product is complete enough for rollout
+- Internal innovation teams piloting AI support tools with lower implementation cost
+
+## Why It Is Better Than a Simple Chat Demo
+
+Simple demos usually stop at “send a prompt and get an answer.” This project is closer to a real backend product:
+
+- Multiple agents instead of a single bot
+- Managed sessions instead of one-off requests
+- Configurable models instead of a hard-coded provider
+- Knowledge base integration instead of pure model-only replies
+- Reusable service layer for multiple clients instead of a single page demo
+
+## Project Structure
 
 ```text
-ai-agent-contact-api             对外接口定义、DTO、响应结构
-ai-agent-contact-app             启动模块、配置、资源、测试
-ai-agent-contact-domain          领域服务、Agent 业务逻辑
-ai-agent-contact-infrastructure  持久化、DAO、配置、外部适配
-ai-agent-contact-trigger         HTTP 控制器、接口入口
-ai-agent-contact-types           通用枚举、异常、常量
+ai-agent-contact-api             API layer
+ai-agent-contact-app             application bootstrap
+ai-agent-contact-domain          core domain logic
+ai-agent-contact-infrastructure  persistence and integrations
+ai-agent-contact-trigger         controllers and triggers
+ai-agent-contact-types           shared types
 ```
 
-## 对外接口能力
+## Tech Stack
 
-主要接口方向包括：
+- Java
+- Spring Boot
+- Maven
+- Database and knowledge-base related integrations
 
-- 查询智能体配置列表
-- 创建对话会话
-- 非流式对话
-- 流式对话
-- 历史消息恢复
-- 模型配置更新
-- 知识库相关接口
+## Quick Start
 
-## 技术栈
+### Requirements
 
-- Java 17
-- Spring Boot 3
-- MyBatis
-- MySQL
-- Spring AI
-- LangChain4j
-- Google ADK
-- SSE 流式输出
+- JDK
+- Maven
+- a configured database and runtime environment
 
-## 快速启动
-
-### 环境要求
-
-- JDK 17
-- Maven 3.8+
-- MySQL
-
-### 启动
+### Build
 
 ```bash
-mvn clean package -DskipTests
-java -jar ai-agent-contact-app/target/agent-scaffold-app.jar
+mvn clean install
 ```
 
-也可以结合仓库中的：
+### Run
 
+Start the Spring Boot application module with the environment configuration required by the project.
+
+Before startup, review:
+
+- `.env.example`
 - `docker-compose.yml`
-- `Dockerfile`
-- `deploy.sh`
-- `deploy.py`
+- `build.md`
 
-进行容器化和远程部署。
+## Recommended Pairing
 
-## 相关前端仓库
+Use this backend together with:
 
-这个后端通常和以下两个前端项目配套使用：
+- [`ai-agent-contact-app`](https://github.com/BlueBloodFire/agent-contact-app)
+- [`ai-agent-contact-client`](https://github.com/BlueBloodFire/agent-contact-client)
 
-- `ai-agent-contact-app`：偏 App 风格的客服前端
-- `ai-agent-contact-client`：偏 Web 工作台风格的客服平台前端
+Together they form the complete AI Agent Contact product:
 
-三者关系如下：
-
-- `ai-agent-contact`：后端、智能体运行时、接口服务
-- `ai-agent-contact-app`：移动端 / App 风格体验层
-- `ai-agent-contact-client`：桌面 Web / 管理工作台体验层
-
-## 适合访客快速理解的一句话
-
-这是一个面向 AI 客服产品的后端平台，负责把“智能体、会话、模型、知识库、流式输出”统一变成可供 Web 和 App 使用的服务。
+- `ai-agent-contact`: backend services, agents, sessions, models, knowledge
+- `ai-agent-contact-app`: mobile-style frontend experience
+- `ai-agent-contact-client`: desktop-style web workspace
