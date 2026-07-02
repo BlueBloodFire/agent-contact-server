@@ -139,3 +139,7 @@ mvn clean install
 - `ai-agent-contact`：后端服务、智能体、会话、模型、知识库
 - `ai-agent-contact-app`：偏移动端 / App 风格前端
 - `ai-agent-contact-client`：偏桌面工作台 / Web 后台前端
+
+## License
+
+本项目使用 Apache License 2.0 授权，请查看 [LICENSE](./LICENSE) 文件。

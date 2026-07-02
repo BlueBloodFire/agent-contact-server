@@ -139,3 +139,7 @@ Together they form the complete AI Agent Contact product:
 - `ai-agent-contact`: backend services, agents, sessions, models, knowledge
 - `ai-agent-contact-app`: mobile-style frontend experience
 - `ai-agent-contact-client`: desktop-style web workspace
+
+## License
+
+Licensed under the Apache License 2.0. See the [LICENSE](./LICENSE) file for details.
